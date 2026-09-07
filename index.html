@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Match - Kembara Dora & Bahasa Melayu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Lexend:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Lexend', sans-serif;
+      user-select: none;
+    }
+    .font-fredoka {
+      font-family: 'Fredoka One', cursive;
+    }
+    
+    /* 3D Card Flip Effects */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+
+    /* Glow and Match Animations */
+    .card-matched {
+      animation: pulseGlow 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 12px #f59e0b, 0 0 22px #fbbf24; transform: scale(0.98); }
+      to { box-shadow: 0 0 25px #ec4899, 0 0 35px #f59e0b; transform: scale(1.02); }
+    }
+
+    /* Floating Animation for Dora */
+    @keyframes floatDora {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(2deg); }
+    }
+    .animate-dora {
+      animation: floatDora 3s ease-in-out infinite;
+    }
+
+    /* Joy Jump Animation when matched */
+    @keyframes doraJump {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-30px) scale(1.1) rotate(-5deg); }
+      60% { transform: translateY(-15px) scale(1.05) rotate(5deg); }
+    }
+    .animate-jump {
+      animation: doraJump 0.8s ease-in-out;
+    }
+
+    /* Background Canvas with Dora Melaka Image */
+    .bg-playful {
+      background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.15), rgba(15, 23, 42, 0.3)), url('MISI 2 DORA  (1).png'), url('MISI 2 DORA  (1)_2.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-color: #ea580c;
+    }
+
+    /* Star Pop Animation for Modal */
+    @keyframes starPop {
+      0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+      80% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .animate-star-1 { animation: starPop 0.5s ease-out forwards 0.2s; }
+    .animate-star-2 { animation: starPop 0.5s ease-out forwards 0.5s; }
+    .animate-star-3 { animation: starPop 0.5s ease-out forwards 0.8s; }
+  </style>
+</head>
+<body class="bg-amber-50 text-slate-800 min-h-screen flex flex-col justify-between bg-playful overflow-x-hidden relative">
+
+  <!-- Vector Melaka Backdrop (Fallback Preview when local image is loading) -->
+  <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden opacity-90">
+    <svg class="w-full h-full object-cover" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- Sky Gradient -->
+      <defs>
+        <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f97316"/>
+          <stop offset="40%" stop-color="#fbbf24"/>
+          <stop offset="100%" stop-color="#fef08a"/>
+        </linearGradient>
+        <linearGradient id="riverGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#0284c7"/>
+          <stop offset="50%" stop-color="#06b6d4"/>
+          <stop offset="100%" stop-color="#0891b2"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Golden Sunset Sky -->
+      <rect width="1200" height="800" fill="url(#skyGrad)"/>
+
+      <!-- Shophouses Silhouette Left -->
+      <path d="M0,450 L60,420 L120,450 L180,410 L250,450 L250,550 L0,550 Z" fill="#b45309" opacity="0.7"/>
+      <path d="M10,460 L50,460 L50,500 L10,500 Z M70,450 L110,450 L110,490 L70,490 Z" fill="#fef08a" opacity="0.8"/>
+
+      <!-- Melaka Dutch Square Stadthuys (Red Building Right) -->
+      <path d="M700,280 L850,220 L1000,280 L1000,550 L700,550 Z" fill="#9f1239"/>
+      <path d="M720,320 L770,320 L770,380 L720,380 Z M830,300 L880,300 L880,360 L830,360 Z M920,320 L970,320 L970,380 L920,380 Z" fill="#fff" opacity="0.85"/>
+      <polygon points="850,150 820,220 880,220" fill="#881337"/>
+
+      <!-- Stone Arch Bridge (Middleburg Bastion) -->
+      <path d="M320,440 C320,440 450,420 580,440 L580,560 C500,480 400,480 320,560 Z" fill="#78350f"/>
+      <path d="M380,560 C380,500 520,500 520,560 Z" fill="#292524"/>
+
+      <!-- Melaka River Canal -->
+      <path d="M0,550 Q300,540 600,560 T1200,540 L1200,800 L0,800 Z" fill="url(#riverGrad)"/>
+      <!-- River Wave Accents -->
+      <path d="M50,620 Q200,600 400,630 T800,610 T1150,630" stroke="#bae6fd" stroke-width="4" fill="none" opacity="0.6"/>
+      <path d="M100,700 Q350,680 600,710 T1100,690" stroke="#bae6fd" stroke-width="3" fill="none" opacity="0.5"/>
+
+      <!-- Melaka Trishaw (Beca) Left Side -->
+      <g transform="translate(60, 520)">
+        <rect x="0" y="20" width="80" height="40" rx="10" fill="#e11d48"/>
+        <path d="M-10,0 L90,0 L80,20 L-10,20 Z" fill="#facc15"/>
+        <circle cx="15" cy="65" r="16" fill="#1e293b" stroke="#fff" stroke-width="3"/>
+        <circle cx="65" cy="65" r="16" fill="#1e293b" stroke="#fff" stroke-width="3"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Header Section -->
+  <header class="w-full bg-gradient-to-r from-pink-500 via-orange-500 to-amber-500 text-white shadow-xl py-2.5 px-4 border-b-4 border-yellow-300">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <!-- Title & Details -->
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-3xl md:text-4xl font-fredoka text-yellow-300 drop-shadow-[0_2px_3px_rgba(0,0,0,0.6)] tracking-wide">
+            Jelajah Ilmu Melaka 🎒🌟
+          </h1>
+          <span class="bg-yellow-400 text-amber-950 text-xs px-2.5 py-1 rounded-full font-extrabold uppercase tracking-wider shadow">
+            Pengembaraan Dora
+          </span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <!-- Leaderboard Button -->
+        <button onclick="openLeaderboard()" class="bg-yellow-400 hover:bg-yellow-300 text-amber-950 font-bold py-2 px-3 rounded-2xl shadow-md border-2 border-white text-xs md:text-sm flex items-center gap-2 transition transform active:scale-95">
+          <i class="fa-solid fa-trophy text-amber-800 text-lg"></i>
+          <span class="hidden sm:inline">Papan Skor</span>
+        </button>
+
+        <!-- Muzik BGM Toggle Button -->
+        <button id="bgmToggle" onclick="toggleBgm()" class="bg-purple-600/80 hover:bg-purple-600 text-white font-bold py-2 px-3 rounded-2xl shadow border border-white/40 text-xs md:text-sm flex items-center gap-2 transition transform active:scale-95">
+          <i id="bgmIcon" class="fa-solid fa-music text-yellow-300 text-lg animate-bounce" style="animation-duration: 2s;"></i>
+          <span id="bgmText" class="hidden md:inline">Muzik: ON</span>
+        </button>
+
+        <!-- Sound Toggle Button -->
+        <button id="soundToggle" onclick="toggleSound()" class="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-3 rounded-2xl shadow border border-white/40 text-xs md:text-sm flex items-center gap-2 transition transform active:scale-95">
+          <i id="soundIcon" class="fa-solid fa-volume-high text-yellow-300 text-lg"></i>
+          <span id="soundText" class="hidden md:inline">Suara: ON</span>
+        </button>
+
+        <!-- Reset Button -->
+        <button onclick="resetGame()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-2xl shadow-md border-2 border-green-300 text-xs md:text-sm flex items-center gap-2 transition transform active:scale-95">
+          <i class="fa-solid fa-rotate-right"></i>
+          <span>Mula Semula</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Instruction Banner -->
+  <div class="max-w-4xl mx-auto my-3 px-4 w-full">
+    <div class="bg-gradient-to-r from-purple-600/90 to-pink-600/90 backdrop-blur-md text-white rounded-3xl p-3 md:p-4 text-center shadow-xl border-4 border-yellow-300 relative overflow-hidden">
+      <p class="text-base md:text-xl font-bold text-yellow-200 tracking-wide flex items-center justify-center gap-2">
+        <i class="fa-solid fa-compass text-yellow-300 animate-spin" style="animation-duration: 8s;"></i>
+        Jom padankan perkataan kepada frasa yang betul!
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Game Layout -->
+  <main class="max-w-5xl mx-auto px-4 py-2 w-full flex-grow flex flex-col md:flex-row items-center justify-between gap-6 relative">
+
+    <!-- Cartoon Dora Mascot -->
+    <div class="w-40 md:w-56 flex-shrink-0 flex flex-col items-center justify-center relative">
+      <div id="doraMascot" class="relative w-36 h-48 md:w-48 md:h-60 animate-dora transition-transform">
+        <svg viewBox="0 0 200 240" class="w-full h-full drop-shadow-2xl">
+          <!-- Dora Hair Back -->
+          <path d="M 25,85 C 10,140 25,175 45,180 C 100,190 155,190 170,175 C 185,140 175,85 160,70 Z" fill="#3B1C0A" />
+          
+          <!-- Backpack (Purple with Eyes & Strap) -->
+          <rect x="25" y="130" width="36" height="50" rx="12" fill="#9333EA" stroke="#581C87" stroke-width="3" />
+          <path d="M 35,130 Q 43,110 65,130" fill="none" stroke="#7E22CE" stroke-width="5" />
+          <!-- Backpack Eyes & Smile -->
+          <circle cx="37" cy="150" r="3" fill="#FFFFFF" />
+          <circle cx="49" cy="150" r="3" fill="#FFFFFF" />
+          <circle cx="37" cy="150" r="1.5" fill="#000000" />
+          <circle cx="49" cy="150" r="1.5" fill="#000000" />
+          <path d="M 39,160 Q 43,165 47,160" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" />
+
+          <!-- Body / Pink T-Shirt -->
+          <path d="M 60,150 Q 100,140 140,150 L 148,200 Q 100,210 52,200 Z" fill="#EC4899" />
+          
+          <!-- Orange Shorts -->
+          <path d="M 62,198 L 62,222 Q 80,225 95,220 L 95,198 Z" fill="#F97316" />
+          <path d="M 105,198 L 105,220 Q 120,225 138,222 L 138,198 Z" fill="#F97316" />
+
+          <!-- Face -->
+          <ellipse cx="100" cy="105" rx="52" ry="46" fill="#FCE7F3" />
+          <ellipse cx="100" cy="105" rx="50" ry="44" fill="#F3D5B5" />
+
+          <!-- Iconic Bob Hair Bangs -->
+          <path d="M 35,85 C 35,30 165,30 165,85 C 145,55 125,50 100,68 C 75,50 55,55 35,85 Z" fill="#4A230C" />
+
+          <!-- Big Expressive Brown Eyes -->
+          <ellipse cx="78" cy="102" rx="11" ry="15" fill="#FFFFFF" />
+          <ellipse cx="122" cy="102" rx="11" ry="15" fill="#FFFFFF" />
+          <ellipse cx="78" cy="102" rx="8" ry="12" fill="#4A230C" />
+          <ellipse cx="122" cy="102" rx="8" ry="12" fill="#4A230C" />
+          <circle cx="81" cy="97" r="3.5" fill="#FFFFFF" />
+          <circle cx="125" cy="97" r="3.5" fill="#FFFFFF" />
+
+          <!-- Cheeks -->
+          <ellipse cx="66" cy="118" rx="8" ry="5" fill="#FB7185" opacity="0.5" />
+          <ellipse cx="134" cy="118" rx="8" ry="5" fill="#FB7185" opacity="0.5" />
+
+          <!-- Wide Happy Smile -->
+          <path d="M 82,122 Q 100,142 118,122 Z" fill="#B91C1C" />
+          <path d="M 88,122 Q 100,130 112,122" fill="#FFFFFF" />
+
+          <!-- Yellow Bracelet -->
+          <circle cx="152" cy="165" r="6" fill="#FACC15" />
+          <circle cx="152" cy="165" r="3" fill="#38BDF8" />
+
+          <!-- Pointing Arm / Hand -->
+          <path d="M 135,155 Q 165,135 180,115" fill="none" stroke="#F3D5B5" stroke-width="14" stroke-linecap="round" />
+          <circle cx="180" cy="115" r="9" fill="#F3D5B5" />
+        </svg>
+      </div>
+
+      <!-- Dora Speech Bubble (Static Text) -->
+      <div id="doraSpeech" class="bg-white/95 text-purple-950 border-4 border-yellow-400 rounded-2xl p-2.5 px-3.5 text-xs md:text-sm font-extrabold shadow-xl text-center mt-2 max-w-[200px] relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-b-8 border-b-yellow-400"></div>
+        Mari cari pasangan kata sepadan!
+      </div>
+    </div>
+
+    <!-- Cards Grid (4x2 Layout) -->
+    <div class="flex-grow w-full max-w-2xl">
+      <div id="cardGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 p-2">
+        <!-- Cards generated dynamically -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer Stats -->
+  <footer class="w-full bg-gradient-to-r from-purple-950 via-slate-900 to-pink-950 text-white p-3 md:p-4 border-t-4 border-yellow-400 mt-auto shadow-inner">
+    <div class="max-w-6xl mx-auto flex items-center justify-center">
+      
+      <!-- Markah & Pemasa -->
+      <div class="flex items-center gap-6 w-full max-w-md justify-around">
+        <!-- Markah -->
+        <div class="bg-purple-900/80 border-2 border-yellow-400/80 rounded-2xl px-5 py-2 flex items-center gap-3 shadow">
+          <div class="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center text-amber-950 text-xl font-bold shadow">
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div>
+            <div class="text-[10px] text-yellow-300 font-extrabold uppercase tracking-wider">Markah</div>
+            <div id="scoreDisplay" class="text-xl md:text-2xl font-fredoka text-white">0 / 8</div>
+          </div>
+        </div>
+
+        <!-- Pemasa -->
+        <div class="bg-purple-900/80 border-2 border-yellow-400/80 rounded-2xl px-5 py-2 flex items-center gap-3 shadow">
+          <div class="w-10 h-10 rounded-full bg-pink-500 flex items-center justify-center text-white text-xl shadow">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div>
+            <div class="text-[10px] text-pink-300 font-extrabold uppercase tracking-wider">Baki Masa</div>
+            <div id="timerDisplay" class="text-xl md:text-2xl font-fredoka text-yellow-300">03:00</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Win Modal Popup -->
+  <div id="winModal" class="fixed inset-0 bg-slate-900/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-amber-50 border-8 border-yellow-400 rounded-3xl p-6 md:p-8 max-w-lg w-full text-center shadow-2xl relative transform transition-all scale-100">
+      
+      <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-gradient-to-tr from-yellow-400 to-amber-300 rounded-full border-4 border-white flex items-center justify-center text-5xl text-amber-950 shadow-xl animate-bounce">
+        🏆
+      </div>
+
+      <h2 class="text-3xl font-fredoka text-purple-950 mt-8 mb-1">Tahniah! Syabas! 🎉</h2>
+      <p class="text-slate-600 font-medium text-sm mb-3">Misi pengembaraan telah berjaya diselesaikan!</p>
+
+      <!-- 3 Stars Rating -->
+      <div class="flex justify-center items-center gap-3 my-4">
+        <div id="star1" class="text-4xl md:text-5xl text-slate-300 opacity-30">⭐</div>
+        <div id="star2" class="text-5xl md:text-6xl text-slate-300 opacity-30 -translate-y-2">⭐</div>
+        <div id="star3" class="text-4xl md:text-5xl text-slate-300 opacity-30">⭐</div>
+      </div>
+
+      <!-- Achievement Badge -->
+      <div class="bg-gradient-to-r from-purple-100 via-pink-100 to-yellow-100 border-2 border-amber-300 rounded-2xl p-4 mb-4 shadow-inner flex items-center gap-4 justify-center">
+        <div class="w-14 h-14 rounded-full bg-yellow-400 border-2 border-amber-600 flex items-center justify-center text-3xl shadow">
+          🎖️
+        </div>
+        <div class="text-left">
+          <div class="text-[10px] font-extrabold text-purple-800 tracking-wider uppercase">Lencana Pencapaian</div>
+          <div id="badgeTitle" class="text-lg font-fredoka text-amber-900">Peneroka Ilmu Melaka</div>
+          <div id="badgeDesc" class="text-xs text-slate-600">Membaca 4 frasa dengan sempurna!</div>
+        </div>
+      </div>
+
+      <!-- Markah & Masa Detail -->
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <div class="bg-white p-2.5 rounded-xl border border-amber-200 shadow-sm">
+          <span class="text-[10px] text-slate-500 font-bold block">JUMLAH MARKAH</span>
+          <span id="finalScore" class="text-2xl font-fredoka text-purple-700">8 / 8</span>
+        </div>
+        <div class="bg-white p-2.5 rounded-xl border border-amber-200 shadow-sm">
+          <span class="text-[10px] text-slate-500 font-bold block">MASA DIAMPIL</span>
+          <span id="finalTime" class="text-2xl font-fredoka text-pink-600">00:45</span>
+        </div>
+      </div>
+
+      <!-- Name Input for Leaderboard -->
+      <div class="mb-5 text-left">
+        <label class="block text-xs font-bold text-slate-700 mb-1">Masukkan Nama Murid (Papan Skor):</label>
+        <div class="flex gap-2">
+          <input type="text" id="playerNameInput" placeholder="Contoh: Dora / Ali" class="flex-grow border-2 border-purple-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-purple-600 font-bold text-slate-800">
+          <button onclick="saveScoreToLeaderboard()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow">
+            Simpan
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-3">
+        <button onclick="resetGame()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-fredoka text-base py-3 px-4 rounded-2xl shadow-lg border-b-4 border-green-700 active:border-b-0 transition transform active:scale-95">
+          Main Lagi 🔄
+        </button>
+        <button onclick="openLeaderboard()" class="bg-yellow-400 hover:bg-yellow-300 text-amber-950 font-fredoka text-base py-3 px-4 rounded-2xl shadow-lg border-b-4 border-yellow-600 active:border-b-0 transition transform active:scale-95">
+          Papan Skor 🏆
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Leaderboard Modal -->
+  <div id="leaderboardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white border-4 border-purple-400 rounded-3xl p-6 max-w-md w-full shadow-2xl relative">
+      <button onclick="closeLeaderboard()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">
+        ✕
+      </button>
+
+      <div class="text-center mb-4">
+        <div class="text-4xl mb-1">🏆</div>
+        <h3 class="text-2xl font-fredoka text-purple-900">Papan Skor</h3>
+        <p class="text-xs text-slate-500">Senarai Penjelajah Terbaik Bahasa Melayu</p>
+      </div>
+
+      <!-- Leaderboard List -->
+      <div id="leaderboardList" class="space-y-2 my-4 max-h-60 overflow-y-auto pr-1">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <button onclick="closeLeaderboard()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-fredoka py-2.5 rounded-xl shadow transition">
+        Tutup
+      </button>
+    </div>
+  </div>
+
+  <!-- Game Logic Script -->
+  <script>
+    // Phrase Pairs Dataset
+    const phrasePairs = [
+      { id: 1, first: "Masjid", second: "Selat" },
+      { id: 2, first: "Menara", second: "Taming Sari" },
+      { id: 3, first: "Sungai", second: "Melaka" },
+      { id: 4, first: "asam", second: "pedas" }
+    ];
+
+    // Card & Game State
+    let cards = [];
+    let flippedCards = [];
+    let matchedPairsCount = 0;
+    let totalScore = 0;
+    let isBusy = false;
+    let soundEnabled = true;
+    let bgmEnabled = true;
+    let bgmTimer = null;
+    let bgmStep = 0;
+
+    // Handle Card Click
+    function handleCardClick(id) {
+      if (isBusy) return;
+      
+      // Auto Start BGM on first user interaction if enabled
+      if (bgmEnabled && !bgmTimer) {
+        startBgm();
+      }
+
+      const card = cards.find(c => c.id === id);
+      if (!card || card.isFlipped || card.isMatched) return;
+
+      card.isFlipped = true;
+      flippedCards.push(card);
+      updateCardUI(id);
+      playSound('flip');
+
+      // Sebut kata apabila kad ditekan
+      speakText(card.text);
+
+      if (flippedCards.length === 2) {
+        checkMatch();
+      }
+    }
+
+    // Kemaskini animasi pusingan kad
+    function updateCardUI(id) {
+      const card = cards.find(c => c.id === id);
+      const inner = document.getElementById(`card-inner-${id}`);
+      if (inner && card) {
+        if (card.isFlipped || card.isMatched) {
+          inner.classList.add('rotate-y-180');
+        } else {
+          inner.classList.remove('rotate-y-180');
+        }
+      }
+    }
+
+    // Timer (3 Minutes)
+    const TOTAL_SECONDS = 180;
+    let timeRemaining = TOTAL_SECONDS;
+    let timerInterval = null;
+
+    // Leaderboard storage
+    let leaderboardData = [
+      { name: "Dora Explorer", score: 8, time: "00:42", seconds: 42 },
+      { name: "Boots", score: 8, time: "00:55", seconds: 55 }
+    ];
+
+    // Web Audio Context for SFX & BGM Synth
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Cheerful Melodic Sequence (Playful Marimba/Pluck Style)
+    const bgmNotes = [
+      { note: 523.25, bass: 261.63, dur: 0.18 }, // C5, C4
+      { note: 659.25, bass: 0,      dur: 0.18 }, // E5
+      { note: 783.99, bass: 261.63, dur: 0.18 }, // G5, C4
+      { note: 1046.50,bass: 0,      dur: 0.25 }, // C6
+      
+      { note: 880.00, bass: 349.23, dur: 0.18 }, // A5, F4
+      { note: 1046.50,bass: 0,      dur: 0.18 }, // C6
+      { note: 1396.91,bass: 349.23, dur: 0.18 }, // F6, F4
+      { note: 1318.51,bass: 0,      dur: 0.25 }, // E6
+
+      { note: 783.99, bass: 392.00, dur: 0.18 }, // G5, G4
+      { note: 987.77, bass: 0,      dur: 0.18 }, // B5
+      { note: 1174.66,bass: 392.00, dur: 0.18 }, // D6, G4
+      { note: 1046.50,bass: 0,      dur: 0.25 }, // C6
+
+      { note: 880.00, bass: 261.63, dur: 0.18 }, // A5, C4
+      { note: 783.99, bass: 0,      dur: 0.18 }, // G5
+      { note: 659.25, bass: 392.00, dur: 0.18 }, // E5, G4
+      { note: 523.25, bass: 261.63, dur: 0.35 }  // C5, C4
+    ];
+
+    function playBgmStep() {
+      if (!bgmEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
+      const item = bgmNotes[bgmStep];
+      const now = audioCtx.currentTime;
+
+      // Play Melodic Pluck
+      if (item.note > 0) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(item.note, now);
+        
+        gain.gain.setValueAtTime(0.04, now); // Gentle, subtle background volume
+        gain.gain.exponentialRampToValueAtTime(0.001, now + item.dur);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + item.dur);
+      }
+
+      // Play Warm Bass Note
+      if (item.bass > 0) {
+        const bassOsc = audioCtx.createOscillator();
+        const bassGain = audioCtx.createGain();
+        bassOsc.type = 'sine';
+        bassOsc.frequency.setValueAtTime(item.bass / 2, now);
+        
+        bassGain.gain.setValueAtTime(0.03, now);
+        bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        bassOsc.connect(bassGain);
+        bassGain.connect(audioCtx.destination);
+        bassOsc.start(now);
+        bassOsc.stop(now + 0.25);
+      }
+
+      bgmStep = (bgmStep + 1) % bgmNotes.length;
+    }
+
+    function startBgm() {
+      if (bgmTimer) return;
+      initAudio();
+      bgmStep = 0;
+      bgmTimer = setInterval(playBgmStep, 300); // Upbeat tempo ~200 BPM
+    }
+
+    function stopBgm() {
+      if (bgmTimer) {
+        clearInterval(bgmTimer);
+        bgmTimer = null;
+      }
+    }
+
+    function toggleBgm() {
+      bgmEnabled = !bgmEnabled;
+      const icon = document.getElementById('bgmIcon');
+      const text = document.getElementById('bgmText');
+
+      if (bgmEnabled) {
+        icon.className = "fa-solid fa-music text-yellow-300 text-lg animate-bounce";
+        text.innerText = "Muzik: ON";
+        startBgm();
+      } else {
+        icon.className = "fa-solid fa-music-slash text-slate-400 text-lg";
+        text.innerText = "Muzik: OFF";
+        stopBgm();
+      }
+    }
+
+    // Play Sound Effects
+    function playSound(type) {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'flip') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(350, now);
+        osc.frequency.exponentialRampToValueAtTime(700, now + 0.1);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
+      } else if (type === 'match') {
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.3);
+        });
+      } else if (type === 'wrong') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.setValueAtTime(170, now + 0.15);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'win') {
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        notes.forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.frequency.setValueAtTime(freq, now + i * 0.1);
+          gain.gain.setValueAtTime(0.2, now + i * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.4);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + i * 0.1);
+          osc.stop(now + i * 0.1 + 0.4);
+        });
+      }
+    }
+
+    // Text to Speech (Enhanced Malay Pronunciation)
+    function speakText(text) {
+      if (!soundEnabled || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ms-MY';
+      utterance.rate = 0.85; // Slower, crisp voice for educational clarity
+      utterance.pitch = 1.1; // Friendly natural tone
+
+      // Select Malay or Indonesian natural voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const msVoice = voices.find(v => (v.lang.includes('ms') || v.lang.includes('id')));
+      if (msVoice) utterance.voice = msVoice;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Reset / Initialize Game
+    function resetGame() {
+      clearInterval(timerInterval);
+      timeRemaining = TOTAL_SECONDS;
+      matchedPairsCount = 0;
+      totalScore = 0;
+      flippedCards = [];
+      isBusy = false;
+
+      updateScoreDisplay();
+      updateTimerDisplay();
+      document.getElementById('winModal').classList.add('hidden');
+
+      // Create & Shuffle Cards
+      const cardList = [];
+      phrasePairs.forEach(pair => {
+        cardList.push({ pairId: pair.id, text: pair.first });
+        cardList.push({ pairId: pair.id, text: pair.second });
+      });
+
+      for (let i = cardList.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cardList[i], cardList[j]] = [cardList[j], cardList[i]];
+      }
+
+      cards = cardList.map((item, index) => ({
+        id: index,
+        pairId: item.pairId,
+        text: item.text,
+        isFlipped: false,
+        isMatched: false
+      }));
+
+      renderCards();
+      startTimer();
+    }
+
+    // Render Cards in DOM (Removed 'DORA MATCH' text from back card)
+    function renderCards() {
+      const grid = document.getElementById('cardGrid');
+      grid.innerHTML = '';
+
+      cards.forEach(card => {
+        const cardElem = document.createElement('div');
+        cardElem.className = "perspective-1000 h-28 sm:h-32 cursor-pointer transform hover:scale-105 transition-transform";
+        cardElem.onclick = () => handleCardClick(card.id);
+
+        const inner = document.createElement('div');
+        inner.id = `card-inner-${card.id}`;
+        inner.className = `w-full h-full duration-500 transform-style-3d transition-transform relative rounded-2xl shadow-lg ${card.isFlipped || card.isMatched ? 'rotate-y-180' : ''}`;
+
+        // Card Cover (Back) - Icon only, no DORA MATCH text
+        const back = document.createElement('div');
+        back.className = "absolute inset-0 bg-gradient-to-br from-purple-500 via-pink-500 to-yellow-400 rounded-2xl border-4 border-yellow-300 flex flex-col items-center justify-center backface-hidden shadow-inner p-2";
+        back.innerHTML = `
+          <div class="w-12 h-12 rounded-2xl bg-white/20 border-2 border-white/40 flex items-center justify-center text-white text-2xl font-bold shadow">
+            🎒
+          </div>
+        `;
+
+        // Card Front (Revealed Word)
+        const front = document.createElement('div');
+        const bgClass = card.isMatched 
+          ? "bg-gradient-to-br from-yellow-300 via-amber-200 to-yellow-400 border-yellow-500 card-matched" 
+          : "bg-white border-purple-400";
+
+        front.className = `absolute inset-0 ${bgClass} rounded-2xl border-4 flex flex-col items-center justify-center backface-hidden rotate-y-180 p-2 shadow-md`;
+        front.innerHTML = `
+          <span class="text-base sm:text-lg font-extrabold text-purple-950 text-center leading-snug px-1">
+            ${card.text}
+          </span>
+          ${card.isMatched ? '<span class="absolute bottom-1 right-2 text-sm">⭐</span>' : ''}
+        `;
+
+        inner.appendChild(back);
+        inner.appendChild(front);
+        cardElem.appendChild(inner);
+        grid.appendChild(cardElem);
+      });
+    }
+
+    // Check Matches
+    function checkMatch() {
+      isBusy = true;
+      const [card1, card2] = flippedCards;
+
+      if (card1.pairId === card2.pairId) {
+        // Success Match!
+        setTimeout(() => {
+          card1.isMatched = true;
+          card2.isMatched = true;
+          matchedPairsCount++;
+          totalScore += 2; // 2 marks per phrase
+
+          updateScoreDisplay();
+          playSound('match');
+          triggerDoraJump();
+
+          const pairObj = phrasePairs.find(p => p.id === card1.pairId);
+          const fullPhrase = `${pairObj.first} ${pairObj.second}`;
+          speakText(fullPhrase);
+
+          renderCards();
+          flippedCards = [];
+          isBusy = false;
+
+          if (matchedPairsCount === phrasePairs.length) {
+            handleWin();
+          }
+        }, 600);
+
+      } else {
+        // Mismatch
+        setTimeout(() => {
+          playSound('wrong');
+          card1.isFlipped = false;
+          card2.isFlipped = false;
+          updateCardUI(card1.id);
+          updateCardUI(card2.id);
+          flippedCards = [];
+          isBusy = false;
+        }, 1200);
+      }
+    }
+
+    // Dora Jump Animation Trigger
+    function triggerDoraJump() {
+      const dora = document.getElementById('doraMascot');
+      if (dora) {
+        dora.classList.add('animate-jump');
+        setTimeout(() => dora.classList.remove('animate-jump'), 800);
+      }
+    }
+
+    function updateScoreDisplay() {
+      document.getElementById('scoreDisplay').innerText = `${totalScore} / 8`;
+    }
+
+    // Timer Logic
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          handleTimeOut();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timeRemaining / 60);
+      const secs = timeRemaining % 60;
+      const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      const timerElem = document.getElementById('timerDisplay');
+      timerElem.innerText = formatted;
+
+      if (timeRemaining <= 30) {
+        timerElem.classList.add('text-red-400', 'animate-pulse');
+      } else {
+        timerElem.classList.remove('text-red-400', 'animate-pulse');
+      }
+    }
+
+    // Handle Win & Badge Calculation
+    function handleWin() {
+      clearInterval(timerInterval);
+      playSound('win');
+
+      const timeSpentSecs = TOTAL_SECONDS - timeRemaining;
+      const minsSpent = Math.floor(timeSpentSecs / 60);
+      const secsSpent = timeSpentSecs % 60;
+      const timeFormatted = `${String(minsSpent).padStart(2, '0')}:${String(secsSpent).padStart(2, '0')}`;
+
+      document.getElementById('finalScore').innerText = `${totalScore} / 8`;
+      document.getElementById('finalTime').innerText = timeFormatted;
+
+      // Calculate Stars (3 Stars: < 60s, 2 Stars: < 120s, 1 Star: > 120s)
+      const star1 = document.getElementById('star1');
+      const star2 = document.getElementById('star2');
+      const star3 = document.getElementById('star3');
+
+      star1.className = "text-4xl md:text-5xl text-yellow-400 animate-star-1 drop-shadow";
+      
+      if (timeSpentSecs <= 120) {
+        star2.className = "text-5xl md:text-6xl text-yellow-400 animate-star-2 drop-shadow -translate-y-2";
+      } else {
+        star2.className = "text-5xl md:text-6xl text-slate-300 opacity-30 -translate-y-2";
+      }
+
+      if (timeSpentSecs <= 60) {
+        star3.className = "text-4xl md:text-5xl text-yellow-400 animate-star-3 drop-shadow";
+        document.getElementById('badgeTitle').innerText = "Peneroka Agung Melaka 🏆";
+        document.getElementById('badgeDesc').innerText = "Sangat pantas & sempurna!";
+      } else {
+        star3.className = "text-4xl md:text-5xl text-slate-300 opacity-30";
+        document.getElementById('badgeTitle').innerText = "Peneroka Ilmu Melaka 🎖️";
+        document.getElementById('badgeDesc').innerText = "Membaca frasa dengan betul!";
+      }
+
+      document.getElementById('winModal').classList.remove('hidden');
+      setDoraSpeech("Syabas! Kita berjaya! 🎉");
+      speakText("Tahniah! Kita berjaya membina semua frasa!");
+    }
+
+    function handleTimeOut() {
+      playSound('wrong');
+      alert('Masa telah tamat! Jom cuba sekali lagi.');
+      resetGame();
+    }
+
+    function setDoraSpeech(text) {
+      const speech = document.getElementById('doraSpeech');
+      if (speech) speech.innerText = text;
+    }
+
+    // Leaderboard Functions
+    function saveScoreToLeaderboard() {
+      const nameInput = document.getElementById('playerNameInput');
+      const name = nameInput.value.trim() || "Peneroka Cilik";
+      
+      const timeSpentSecs = TOTAL_SECONDS - timeRemaining;
+      const minsSpent = Math.floor(timeSpentSecs / 60);
+      const secsSpent = timeSpentSecs % 60;
+      const timeFormatted = `${String(minsSpent).padStart(2, '0')}:${String(secsSpent).padStart(2, '0')}`;
+
+      leaderboardData.push({
+        name: name,
+        score: totalScore,
+        time: timeFormatted,
+        seconds: timeSpentSecs
+      });
+
+      // Sort by score (descending), then time (ascending)
+      leaderboardData.sort((a, b) => b.score - a.score || a.seconds - b.seconds);
+
+      nameInput.value = '';
+      openLeaderboard();
+    }
+
+    function openLeaderboard() {
+      const listElem = document.getElementById('leaderboardList');
+      listElem.innerHTML = '';
+
+      leaderboardData.forEach((item, index) => {
+        const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+        const row = document.createElement('div');
+        row.className = `flex items-center justify-between p-2.5 rounded-xl border ${index < 3 ? 'bg-amber-50 border-amber-300 font-bold' : 'bg-slate-50 border-slate-200'} text-xs md:text-sm`;
+        
+        row.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-6 text-center font-bold text-amber-800">${medal}</span>
+            <span class="text-slate-800 font-bold">${item.name}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-purple-700 font-extrabold">${item.score}/8 Markah</span>
+            <span class="text-slate-500 text-xs"><i class="fa-solid fa-clock mr-1"></i>${item.time}</span>
+          </div>
+        `;
+        listElem.appendChild(row);
+      });
+
+      document.getElementById('leaderboardModal').classList.remove('hidden');
+    }
+
+    function closeLeaderboard() {
+      document.getElementById('leaderboardModal').classList.add('hidden');
+    }
+
+    // Toggle Audio
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      const text = document.getElementById('soundText');
+
+      if (soundEnabled) {
+        icon.className = "fa-solid fa-volume-high text-yellow-300 text-lg";
+        text.innerText = "Suara: ON";
+      } else {
+        icon.className = "fa-solid fa-volume-xmark text-slate-400 text-lg";
+        text.innerText = "Suara: OFF";
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    }
+
+    window.onload = () => {
+      // Pre-load voices for SpeechSynthesis
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+      }
+      
+      // Add global click listener to start background music seamlessly
+      document.body.addEventListener('click', () => {
+        if (bgmEnabled && !bgmTimer) {
+          startBgm();
+        }
+      }, { once: true });
+
+      resetGame();
+    };
+  </script>
+</body>
+</html>
